@@ -7,7 +7,7 @@ import {
   Jost_500Medium,
 } from '@expo-google-fonts/jost';
 
-import { Identification } from './src/pages/Identification';
+import { Confirmation } from './src/pages/Confirmation';
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -18,5 +18,5 @@ export default function App() {
 
   if (!fontsLoaded) return <AppLoading />;
 
-  return <Identification />;
+  return <Confirmation />;
 }
