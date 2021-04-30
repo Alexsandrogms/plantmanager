@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
+
+import { useNavigation } from '@react-navigation/core';
 import {
-  Image,
-  KeyboardAvoidingView,
-  SafeAreaView,
-  Text,
-  TextInput,
   View,
+  Text,
+  Image,
   Platform,
+  TextInput,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 
 import emojiSmileyImg from '@assets/emoji-smiley.png';
@@ -15,9 +19,13 @@ import { Button } from '@components';
 
 import styles from './styles';
 
-export function Identification() {
+export default function Identification() {
   const [isFocused, setIsFocused] = useState(false);
   const [name, setName] = useState('');
+
+  const navigation = useNavigation().navigate;
+
+  const navigateTo = () => navigation('Confirmation');
 
   const handleBlur = () => {
     setIsFocused(false);
@@ -34,28 +42,35 @@ export function Identification() {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.content}>
-          <View style={styles.form}>
-            <Image
-              source={!(isFocused || name) ? emojiSmileyImg : emojiSmileImg}
-              style={styles.emoji}
-            />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.content}>
+            <View style={styles.form}>
+              <Image
+                source={!(isFocused || name) ? emojiSmileyImg : emojiSmileImg}
+                style={styles.emoji}
+              />
 
-            <Text style={styles.heading}>Como podemos{'\n'}chamar você?</Text>
-            <TextInput
-              value={name}
-              style={[
-                styles.input,
-                isFocused || name ? styles.inputActive : null,
-              ]}
-              placeholder="Digite um nome"
-              placeholderTextColor="#ccc"
-              onBlur={handleBlur}
-              onChangeText={handleChangeText}
-            />
-            <Button text="Confirmar" disabled={name.length < 1} />
+              <Text style={styles.heading}>Como podemos{'\n'}chamar você?</Text>
+              <TextInput
+                value={name}
+                style={[
+                  styles.input,
+                  isFocused || name ? styles.inputActive : null,
+                ]}
+                placeholder="Digite um nome"
+                placeholderTextColor="#ccc"
+                onBlur={handleBlur}
+                onChangeText={handleChangeText}
+              />
+              <Button
+                text="Confirmar"
+                disabled={name.length < 1}
+                enabled={name.length > 1}
+                onPress={navigateTo}
+              />
+            </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

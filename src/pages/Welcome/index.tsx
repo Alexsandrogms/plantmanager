@@ -1,18 +1,24 @@
 import React from 'react';
+
+import { useNavigation } from '@react-navigation/core';
 import { MaterialIcons } from '@expo/vector-icons';
 import {
   SafeAreaView,
   Text,
   Image,
-  TouchableOpacity,
   View,
 } from 'react-native';
 
 import wateringImg from '@assets/watering.png';
 
 import styles from './styles';
+import { RectButton } from 'react-native-gesture-handler';
 
-export function Welcome() {
+export default function Welcome() {
+  const navigation = useNavigation().navigate;
+
+  const nextPage = () => navigation('Identification');
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.wrapper}>
@@ -29,11 +35,15 @@ export function Welcome() {
           sempre que precisar
         </Text>
 
-        <TouchableOpacity style={styles.button} activeOpacity={0.7}>
+        <RectButton
+          style={styles.button}
+          activeOpacity={0.7}
+          onPress={nextPage}
+        >
           <Text>
             <MaterialIcons name="chevron-right" size={30} color="#fff" />
           </Text>
-        </TouchableOpacity>
+        </RectButton>
       </View>
     </SafeAreaView>
   );

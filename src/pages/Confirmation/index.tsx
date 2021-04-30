@@ -7,7 +7,7 @@ import { Button } from '@components';
 
 import styles from './styles';
 
-export function Confirmation() {
+export default function Confirmation() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -19,7 +19,7 @@ export function Confirmation() {
             plantinhas com muito cuidado.
           </Text>
         </View>
-        <Button text="Confirmar" />
+        <Button text="Começar" />
       </View>
     </SafeAreaView>
   );
