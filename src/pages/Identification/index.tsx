@@ -65,7 +65,7 @@ export default function Identification() {
               <Button
                 text="Confirmar"
                 disabled={name.length < 1}
-                enabled={name.length > 1}
+                enabled={name.length >= 1}
                 onPress={navigateTo}
               />
             </View>
