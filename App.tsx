@@ -4,17 +4,19 @@ import {
   useFonts,
   Jost_400Regular,
   Jost_600SemiBold,
+  Jost_500Medium,
 } from '@expo-google-fonts/jost';
 
-import { Welcome } from './src/pages/Welcome';
+import { Identification } from './src/pages/Identification';
 
 export default function App() {
   let [fontsLoaded] = useFonts({
     Jost_400Regular,
     Jost_600SemiBold,
+    Jost_500Medium,
   });
 
   if (!fontsLoaded) return <AppLoading />;
 
-  return <Welcome />;
+  return <Identification />;
 }
