@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useNavigation } from '@react-navigation/core';
 import {
@@ -11,6 +12,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from 'react-native';
 
 import emojiSmileyImg from '@assets/emoji-smiley.png';
@@ -25,8 +27,6 @@ export default function Identification() {
 
   const navigation = useNavigation().navigate;
 
-  const navigateTo = () => navigation('Confirmation');
-
   const handleBlur = () => {
     setIsFocused(false);
   };
@@ -34,6 +34,19 @@ export default function Identification() {
   const handleChangeText = (text: string) => {
     setIsFocused(true);
     setName(text);
+  };
+
+  const handleSubmit = async () => {
+    if (!name) {
+      return Alert.alert('', 'Me diz como chamar você 😅');
+    }
+
+    try {
+      await AsyncStorage.setItem('@plantmanager:username', name);
+      navigation('Confirmation');
+    } catch {
+      Alert.alert('', 'Não foi possível salvar o nome do usuário! 😥');
+    }
   };
 
   return (
@@ -66,7 +79,7 @@ export default function Identification() {
                 text="Confirmar"
                 disabled={name.length < 1}
                 enabled={name.length >= 1}
-                onPress={navigateTo}
+                onPress={handleSubmit}
               />
             </View>
           </View>

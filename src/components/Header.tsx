@@ -12,6 +12,8 @@ import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import fonts from '@styles/fonts';
 import colors from '@styles/colors';
 
+import { useMainContext } from '@contexts/MainContext';
+
 interface HeaderProps {
   title: string;
   subtitle: string;
@@ -19,15 +21,22 @@ interface HeaderProps {
 }
 
 export default function Header({ title, subtitle, image }: HeaderProps) {
+  const { username } = useMainContext();
+
   return (
     <View style={styles.wrapper}>
       <View>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle} numberOfLines={2}>
-          {subtitle}
+        <Text style={styles.subtitle} numberOfLines={1}>
+          {username}
         </Text>
       </View>
-      <Image source={image} style={styles.image} />
+      <Image
+        source={{
+          uri: 'https://avatars.githubusercontent.com/u/49795688?v=4',
+        }}
+        style={styles.image}
+      />
     </View>
   );
 }
@@ -51,11 +60,10 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     fontFamily: fonts.heading,
     color: colors.heading,
-    maxWidth: '80%',
   },
   image: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
   },
 });
