@@ -14,16 +14,9 @@ import styles from './styles';
 type Plant = {
   id: number;
   name: string;
-  about: string;
-  water_tips: string;
   photo: string;
-  environments: String[];
   dateTimeNotification: Date;
   hour: string;
-  frequency: {
-    times: number;
-    repeat_every: string;
-  };
 };
 
 type StoragePlantProps = {

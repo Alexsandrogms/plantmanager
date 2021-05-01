@@ -29,11 +29,6 @@ type Plant = {
   about: string;
   water_tips: string;
   photo: string;
-  environments: String[];
-  frequency: {
-    times: number;
-    repeat_every: string;
-  };
   dateTimeNotification: Date;
 };
 
