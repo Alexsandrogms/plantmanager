@@ -9,7 +9,7 @@ import { format, formatDistance } from 'date-fns';
 
 import waterDropImg from '@assets/waterdrop.png';
 
-import { Header, Load, Modal, PlantCardSecondary } from '@components';
+import { Header, Load, Modal, PlantCardSecondary, Error } from '@components';
 
 import styles from './styles';
 
@@ -35,7 +35,7 @@ export default function MyPlants() {
   const [selectedPlantRemove, setSelectedPlantRemove] = useState<Plant>();
   const isFocused = useIsFocused();
 
-  const loadPlants = async (): Promise<Plant[]> => {
+  const loadPlants = async (): Promise<Plant[] | undefined> => {
     try {
       const data = await AsyncStorage.getItem('@plantmanager:plants');
       const plants = data ? (JSON.parse(data) as StoragePlantProps) : {};
@@ -57,9 +57,9 @@ export default function MyPlants() {
           )
         );
 
-      return plantsSorted;
+      return plantsSorted || [];
     } catch (error) {
-      throw new Error(error);
+      console.log(error);
     }
   };
 
@@ -103,6 +103,8 @@ export default function MyPlants() {
       try {
         const plantsStored = await loadPlants();
 
+        if (!plantsStored || plantsStored.length === 0) return;
+
         const nextPlantWater = formatDistance(
           new Date(plantsStored[0].dateTimeNotification).getTime(),
           new Date().getTime(),
@@ -131,27 +133,33 @@ export default function MyPlants() {
       <View style={styles.container}>
         <Header title="Minhas" subtitle="Plantinhas" image="" />
 
-        <View style={styles.spotlight}>
-          <Image source={waterDropImg} style={styles.spotlightImage} />
+        {plantList.length ? (
+          <>
+            <View style={styles.spotlight}>
+              <Image source={waterDropImg} style={styles.spotlightImage} />
 
-          <Text style={styles.spotlightText}>{nextPlantWarted}</Text>
-        </View>
+              <Text style={styles.spotlightText}>{nextPlantWarted}</Text>
+            </View>
 
-        <View style={styles.plantList}>
-          <Text style={styles.plantListTitle}>Próximas regadas</Text>
+            <View style={styles.plantList}>
+              <Text style={styles.plantListTitle}>Próximas regadas</Text>
 
-          <FlatList
-            data={plantList}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={({ item }) => (
-              <PlantCardSecondary
-                data={item}
-                handleSwiperRemove={() => handleSelectedPlantRemove(item)}
+              <FlatList
+                data={plantList}
+                keyExtractor={(item) => String(item.id)}
+                renderItem={({ item }) => (
+                  <PlantCardSecondary
+                    data={item}
+                    handleSwiperRemove={() => handleSelectedPlantRemove(item)}
+                  />
+                )}
+                showsVerticalScrollIndicator={false}
               />
-            )}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
+            </View>
+          </>
+        ) : (
+          <Error />
+        )}
       </View>
       <Modal
         show={!isEmpty(selectedPlantRemove)}
