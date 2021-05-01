@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { ColorValue, Text } from 'react-native';
 
 import colors from '@styles/colors';
 import fonts from '@styles/fonts';
@@ -8,6 +9,24 @@ import fonts from '@styles/fonts';
 import { MyPlants, PlantSelection } from '@pages';
 
 const { Navigator, Screen } = createMaterialTopTabNavigator();
+
+type TabBarLabelProps = {
+  text: string;
+  color: ColorValue | undefined;
+  children?: ReactNode;
+};
+
+const TabBarLabel = ({ text, color }: TabBarLabelProps) => (
+  <Text
+    style={{
+      fontFamily: fonts.light,
+      textTransform: 'capitalize',
+      color,
+    }}
+  >
+    {text}
+  </Text>
+);
 
 export default function TabRoutes() {
   return (
@@ -30,12 +49,6 @@ export default function TabRoutes() {
           alignItems: 'center',
           justifyContent: 'center',
         },
-        labelStyle: {
-          fontFamily: fonts.light,
-          textTransform: 'capitalize',
-          color: colors.heading,
-          marginLeft: 10,
-        },
       }}
       initialRouteName="Plant"
     >
@@ -43,7 +56,9 @@ export default function TabRoutes() {
         name="PlantSelection"
         component={PlantSelection}
         options={{
-          title: 'Nova Planta',
+          tabBarLabel: ({ color }) => (
+            <TabBarLabel text="Nova PLanta" color={color} />
+          ),
           tabBarIcon: ({ color }) => (
             <Ionicons name="add-circle-outline" size={30} color={color} />
           ),
@@ -53,7 +68,9 @@ export default function TabRoutes() {
         name="MyPlants"
         component={MyPlants}
         options={{
-          title: 'Minhas Plantas',
+          tabBarLabel: ({ color }) => (
+            <TabBarLabel text="Minhas PLantas" color={color} />
+          ),
           tabBarIcon: ({ color }) => (
             <Ionicons name="list-outline" size={30} color={color} />
           ),

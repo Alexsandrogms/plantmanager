@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ptBR from 'date-fns/locale/pt-BR';
 
 import { View, Text, Image, FlatList } from 'react-native';
+import { useIsFocused } from '@react-navigation/core';
 import { format, formatDistance } from 'date-fns';
 
 import waterDropImg from '@assets/waterdrop.png';
@@ -22,6 +24,7 @@ type Plant = {
 type StoragePlantProps = {
   [id: string]: {
     data: Plant;
+    notificationId: string;
   };
 };
 
@@ -30,6 +33,7 @@ export default function MyPlants() {
   const [loading, setLoading] = useState<boolean>(true);
   const [nextPlantWarted, setNextPlantWarted] = useState<string>('');
   const [selectedPlantRemove, setSelectedPlantRemove] = useState<Plant>();
+  const isFocused = useIsFocused();
 
   const loadPlants = async (): Promise<Plant[]> => {
     try {
@@ -67,6 +71,10 @@ export default function MyPlants() {
 
       const data = await AsyncStorage.getItem('@plantmanager:plants');
       const plantsStored = data ? (JSON.parse(data) as StoragePlantProps) : {};
+
+      await Notifications.cancelScheduledNotificationAsync(
+        plantsStored[selectedPlantRemove.id].notificationId
+      );
 
       delete plantsStored[selectedPlantRemove.id];
 
@@ -114,7 +122,7 @@ export default function MyPlants() {
 
       setLoading(false);
     })();
-  }, []);
+  }, [isFocused]);
 
   if (loading) return <Load />;
 

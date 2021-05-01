@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     backgroundColor: colors.shape,
+    position: 'relative',
   },
   heading: {
     flex: 1,
@@ -82,6 +83,17 @@ const styles = StyleSheet.create({
     borderColor: colors.gray,
     borderRadius: 10,
     marginHorizontal: 15,
+  },
+  buttonGoBack: {
+    width: 40,
+    height: 40,
+    position: 'absolute',
+    top: 40,
+    left: 10,
+    zIndex: 2,
+  },
+  buttonIcon: {
+    color: colors.gray_dark,
   },
 });
 

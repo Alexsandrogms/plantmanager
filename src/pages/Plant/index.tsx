@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import * as Notifications from 'expo-notifications';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker, { Event } from '@react-native-community/datetimepicker';
 
 import { SvgFromUri } from 'react-native-svg';
 import { StackScreenProps } from '@react-navigation/stack';
 import { isBefore, format } from 'date-fns';
+import { MaterialIcons } from '@expo/vector-icons';
+import { RectButton } from 'react-native-gesture-handler';
 
 import {
   View,
@@ -21,7 +25,7 @@ import clockImg from '@assets/clock.png';
 import { Button, Modal } from '@components';
 
 import styles from './styles';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/core';
 
 type Plant = {
   id: number;
@@ -30,6 +34,10 @@ type Plant = {
   water_tips: string;
   photo: string;
   dateTimeNotification: Date;
+  frequency: {
+    times: number;
+    repeat_every: string;
+  };
 };
 
 type StackParamList = {
@@ -39,13 +47,22 @@ type StackParamList = {
 type StoragePlantProps = {
   [id: string]: {
     data: Plant;
+    notificationsId: string;
   };
 };
 
 type PlantProps = StackScreenProps<StackParamList, 'Plant'>;
 
 export default function Plant({ route: { params } }: PlantProps) {
-  const { name, about, photo, water_tips } = params;
+  const {
+    name,
+    about,
+    photo,
+    water_tips,
+    frequency: { repeat_every, times },
+  } = params;
+
+  const goBack = useNavigation().goBack;
 
   const [selectedDateTime, setSelectedDateTime] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState<Boolean>(
@@ -60,7 +77,7 @@ export default function Plant({ route: { params } }: PlantProps) {
       setShowDatePicker((prevState) => !prevState);
     }
 
-    if (dateTime && isBefore(currentDate, dateTime)) {
+    if (dateTime && isBefore(dateTime, currentDate)) {
       setSelectedDateTime(currentDate);
       return Alert.alert('Escolha uma hora futura! ⏰');
     }
@@ -74,12 +91,47 @@ export default function Plant({ route: { params } }: PlantProps) {
 
   const savePlant = async () => {
     try {
+      const nextTime = new Date(selectedDateTime);
+      const now = new Date();
+
+      if (repeat_every == 'week') {
+        const interval = Math.trunc(7 / times);
+        nextTime.setDate(now.getDate() + interval);
+      } else {
+        nextTime.setDate(nextTime.getDate() + 1);
+      }
+
+      // diferença em segundos de um tempo pro outro
+      const seconds = Math.abs(
+        Math.ceil((now.getTime() - nextTime.getTime()) / 1000)
+      );
+
+      const notificationId = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: 'Heeeey, 🌱',
+          body: `Está na hora de cuidar da sua ${name}`,
+          sound: true,
+          priority: Notifications.AndroidNotificationPriority.HIGH,
+          data: {
+            plant: { ...params },
+          },
+        },
+        trigger: {
+          seconds: seconds < 60 ? 60 : seconds,
+          repeats: true,
+        },
+      });
+
       const data = await AsyncStorage.getItem('@plantmanager:plants');
       const oldPlants = data ? (JSON.parse(data) as StoragePlantProps) : {};
 
       const newPlants = {
         [params.id]: {
-          data: { ...params, dateTimeNotification: selectedDateTime },
+          data: {
+            ...params,
+            dateTimeNotification: selectedDateTime,
+          },
+          notificationId,
         },
       };
 
@@ -105,6 +157,13 @@ export default function Plant({ route: { params } }: PlantProps) {
       contentContainerStyle={styles.container}
     >
       <View style={styles.container}>
+        <RectButton style={styles.buttonGoBack} onPress={() => goBack()}>
+          <MaterialIcons
+            name="chevron-left"
+            size={40}
+            style={styles.buttonIcon}
+          />
+        </RectButton>
         <View style={styles.heading}>
           <SvgFromUri uri={photo} width={156} height={176} />
 
