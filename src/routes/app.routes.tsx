@@ -5,12 +5,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import colors from '@styles/colors';
 
 import {
-  Welcome, 
-  Confirmation, 
-  Identification, 
-  PlantSelection,
-  Plant, 
+  Welcome,
+  Confirmation,
+  Identification,
+  Plant,
 } from '@pages';
+
+import TabRoutes from './tab.routes';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -27,7 +28,7 @@ export default function AppRoutes() {
       <Screen name="Welcome" component={Welcome} />
       <Screen name="Identification" component={Identification} />
       <Screen name="Confirmation" component={Confirmation} />
-      <Screen name="PlantSelection" component={PlantSelection} />
+      <Screen name="PlantSelection" component={TabRoutes} />
       <Screen name="Plant" component={Plant} />
     </Navigator>
   );

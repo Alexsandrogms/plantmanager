@@ -1,12 +1,6 @@
 import React from 'react';
 
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ImageSourcePropType,
-} from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 
 import fonts from '@styles/fonts';
@@ -17,8 +11,10 @@ import { useMainContext } from '@contexts/MainContext';
 interface HeaderProps {
   title: string;
   subtitle: string;
-  image: ImageSourcePropType;
+  image: string;
 }
+
+const { width: screenW } = Dimensions.get('window');
 
 export default function Header({ title, subtitle, image }: HeaderProps) {
   const { username } = useMainContext();
@@ -27,9 +23,7 @@ export default function Header({ title, subtitle, image }: HeaderProps) {
     <View style={styles.wrapper}>
       <View>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle} numberOfLines={1}>
-          {username}
-        </Text>
+        <Text style={styles.subtitle}>{subtitle || username}</Text>
       </View>
       <Image
         source={{
@@ -48,6 +42,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: getStatusBarHeight(),
+    maxWidth: screenW - 32,
   },
   title: {
     fontSize: 32,
@@ -56,6 +51,7 @@ const styles = StyleSheet.create({
     color: colors.heading,
   },
   subtitle: {
+    maxWidth: screenW - 32 - 120,
     fontSize: 32,
     lineHeight: 36,
     fontFamily: fonts.heading,
