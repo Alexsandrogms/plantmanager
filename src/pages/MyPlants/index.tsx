@@ -7,7 +7,7 @@ import { format, formatDistance } from 'date-fns';
 
 import waterDropImg from '@assets/waterdrop.png';
 
-import { Header, Load, PlantCardSecondary } from '@components';
+import { Header, Load, Modal, PlantCardSecondary } from '@components';
 
 import styles from './styles';
 
@@ -29,6 +29,7 @@ export default function MyPlants() {
   const [plantList, setPlantList] = useState<Plant[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [nextPlantWarted, setNextPlantWarted] = useState<string>('');
+  const [selectedPlantRemove, setSelectedPlantRemove] = useState<Plant>();
 
   const loadPlants = async (): Promise<Plant[]> => {
     try {
@@ -56,6 +57,37 @@ export default function MyPlants() {
     } catch (error) {
       throw new Error(error);
     }
+  };
+
+  const onCancelRemove = () => setSelectedPlantRemove(undefined);
+
+  const handleSwiperRemove = async () => {
+    try {
+      if (!selectedPlantRemove) return;
+
+      const data = await AsyncStorage.getItem('@plantmanager:plants');
+      const plantsStored = data ? (JSON.parse(data) as StoragePlantProps) : {};
+
+      delete plantsStored[selectedPlantRemove.id];
+
+      await AsyncStorage.setItem(
+        '@plantmanager:plants',
+        JSON.stringify(plantsStored)
+      );
+
+      setPlantList((prevState) =>
+        prevState.filter((state) => state.id !== selectedPlantRemove.id)
+      );
+      setSelectedPlantRemove(undefined);
+    } catch (error) {}
+  };
+
+  const handleSelectedPlantRemove = (plant: Plant) => {
+    setSelectedPlantRemove(plant);
+  };
+
+  const isEmpty = (params: Object | undefined) => {
+    return !params || Object.keys(params).length === 0;
   };
 
   useEffect(() => {
@@ -87,25 +119,42 @@ export default function MyPlants() {
   if (loading) return <Load />;
 
   return (
-    <View style={styles.container}>
-      <Header title="Minhas" subtitle="Plantinhas" image="" />
+    <>
+      <View style={styles.container}>
+        <Header title="Minhas" subtitle="Plantinhas" image="" />
 
-      <View style={styles.spotlight}>
-        <Image source={waterDropImg} style={styles.spotlightImage} />
+        <View style={styles.spotlight}>
+          <Image source={waterDropImg} style={styles.spotlightImage} />
 
-        <Text style={styles.spotlightText}>{nextPlantWarted}</Text>
+          <Text style={styles.spotlightText}>{nextPlantWarted}</Text>
+        </View>
+
+        <View style={styles.plantList}>
+          <Text style={styles.plantListTitle}>Próximas regadas</Text>
+
+          <FlatList
+            data={plantList}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => (
+              <PlantCardSecondary
+                data={item}
+                handleSwiperRemove={() => handleSelectedPlantRemove(item)}
+              />
+            )}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
       </View>
-
-      <View style={styles.plantList}>
-        <Text style={styles.plantListTitle}>Próximas regadas</Text>
-
-        <FlatList
-          data={plantList}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => <PlantCardSecondary data={item} />}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-    </View>
+      <Modal
+        show={!isEmpty(selectedPlantRemove)}
+        type="remove"
+        plant={{
+          image: selectedPlantRemove?.photo || '',
+          name: `${selectedPlantRemove?.name}?`,
+        }}
+        onRemove={handleSwiperRemove}
+        onCancel={onCancelRemove}
+      />
+    </>
   );
 }

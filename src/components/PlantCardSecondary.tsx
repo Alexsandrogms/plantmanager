@@ -1,31 +1,57 @@
 import React from 'react';
 
-import Svg, { SvgFromUri } from 'react-native-svg';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+
+import { SvgFromUri } from 'react-native-svg';
+import { Feather } from '@expo/vector-icons';
 import { RectButton, RectButtonProps } from 'react-native-gesture-handler';
-import { StyleSheet, Text, View } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 
+type Plant = {
+  name: string;
+  photo: string;
+  hour: string;
+};
+
 interface PlantProps extends RectButtonProps {
-  data: {
-    name: string;
-    photo: string;
-    hour: string;
-  };
+  data: Plant;
+  handleSwiperRemove: () => void;
 }
 
-export default function PlantCardSecondary({ data, ...rest }: PlantProps) {
+export default function PlantCardSecondary({
+  data,
+  handleSwiperRemove,
+  ...rest
+}: PlantProps) {
   return (
-    <RectButton style={styles.container} {...rest}>
-      <SvgFromUri uri={data.photo} width={37} height={41} />
+    <Swipeable
+      overshootRight={false}
+      renderRightActions={() => (
+        <Animated.View>
+          <View>
+            <RectButton
+              style={styles.buttonSwiperRemove}
+              onPress={handleSwiperRemove}
+            >
+              <Feather name="trash" size={32} color={colors.white} />
+            </RectButton>
+          </View>
+        </Animated.View>
+      )}
+    >
+      <RectButton style={styles.container} {...rest}>
+        <SvgFromUri uri={data.photo} width={37} height={41} />
 
-      <Text style={styles.title}>{data.name}</Text>
-      <View style={styles.details}>
-        <Text style={styles.label}>Regar as</Text>
-        <Text style={styles.timeLabel}>{data.hour}</Text>
-      </View>
-    </RectButton>
+        <Text style={styles.title}>{data.name}</Text>
+        <View style={styles.details}>
+          <Text style={styles.label}>Regar as</Text>
+          <Text style={styles.timeLabel}>{data.hour}</Text>
+        </View>
+      </RectButton>
+    </Swipeable>
   );
 }
 
@@ -73,5 +99,17 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     textAlign: 'right',
     color: colors.heading,
+  },
+  buttonSwiperRemove: {
+    width: 100,
+    height: 85,
+    marginTop: 15,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    right: 15,
+    paddingLeft: 10,
+    backgroundColor: colors.red,
   },
 });

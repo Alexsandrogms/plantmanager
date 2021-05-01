@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/core';
 import { SvgFromUri } from 'react-native-svg';
+import { RectButton } from 'react-native-gesture-handler';
 
 import { Animated, Dimensions, StyleSheet, Text, View } from 'react-native';
 
@@ -13,16 +14,21 @@ const { height: heightDefault } = Dimensions.get('window');
 
 interface ProductFormatResultProps {
   show: boolean;
-  type: 'success' | 'delete';
-  image: string;
-  close?: () => void;
+  type: 'success' | 'remove';
+  plant: {
+    image: string;
+    name?: string;
+  };
+  onRemove?: () => void;
+  onCancel?: () => void;
 }
 
 export default function Modal({
   type,
-  image,
+  plant,
   show,
-  close,
+  onCancel,
+  onRemove,
 }: ProductFormatResultProps) {
   const navigation = useNavigation().navigate;
 
@@ -70,7 +76,6 @@ export default function Modal({
         useNativeDriver: true,
       }),
     ]).start();
-    close && close();
   };
 
   useEffect(() => {
@@ -99,25 +104,39 @@ export default function Modal({
           },
         ]}
       >
-        {type === 'success' && (
-          <View style={styles.card}>
-            <View style={styles.image}>
-              <SvgFromUri uri={image} width={120} height={120} />
+        <View style={styles.card}>
+          <View style={styles.image}>
+            <SvgFromUri uri={plant.image} width={120} height={120} />
+          </View>
+          <Text style={type === 'success' ? styles.title : styles.titleRemove}>
+            {plant.name ? 'Deseja mesmo deletar sua' : 'Tudo certo'}
+          </Text>
+          <Text
+            style={type === 'success' ? styles.subtitle : styles.subtitleRemove}
+          >
+            {plant.name ||
+              'Fique tranquilo que sempre vamos lembrar você de cuidar da sua plantinha com bastante amor.'}
+          </Text>
+          {type === 'remove' ? (
+            <View style={styles.buttonsWrapper}>
+              <RectButton style={styles.button} onPress={onCancel}>
+                <Text style={styles.buttonText}>Cancelar</Text>
+              </RectButton>
+              <RectButton style={styles.button} onPress={onRemove}>
+                <Text style={[styles.buttonText, { color: colors.red }]}>
+                  Deletar
+                </Text>
+              </RectButton>
             </View>
-            <Text style={styles.title}>Tudo certo</Text>
-            <Text style={styles.subtitle}>
-              Fique tranquilo que sempre vamos lembrar você de cuidar da sua
-              plantinha com bastante amor.
-            </Text>
+          ) : (
             <Button
               text="Muito obrigado :D"
               onPress={() => {
-                closeModal(), 
-                navigation('MyPlants');
+                closeModal(), navigation('MyPlants');
               }}
             />
-          </View>
-        )}
+          )}
+        </View>
       </Animated.View>
     </Animated.View>
   );
@@ -141,7 +160,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.white,
-    maxWidth: '80%',
+    maxWidth: '85%',
+    maxHeight: '50%',
     paddingHorizontal: 20,
     paddingVertical: 40,
     borderRadius: 20,
@@ -174,5 +194,43 @@ const styles = StyleSheet.create({
     color: colors.heading,
     textAlign: 'center',
     marginBottom: 20,
+  },
+  titleRemove: {
+    fontFamily: fonts.text,
+    fontSize: 17,
+    color: colors.heading,
+    textAlign: 'center',
+    marginBottom: 5,
+    marginTop: 20,
+  },
+  subtitleRemove: {
+    fontFamily: fonts.heading,
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.heading,
+    textAlign: 'center',
+  },
+  buttonsWrapper: {
+    flex: 1,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    marginTop: 20,
+  },
+  button: {
+    width: 96,
+    height: 48,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.shape,
+    borderRadius: 12,
+  },
+  buttonText: {
+    fontFamily: fonts.text,
+    fontSize: 13,
+    lineHeight: 25,
+    color: colors.heading,
   },
 });

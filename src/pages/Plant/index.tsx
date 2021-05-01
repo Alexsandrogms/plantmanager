@@ -145,7 +145,7 @@ export default function Plant({ route: { params } }: PlantProps) {
 
           <Button text="Cadastrar planta" width={311} onPress={savePlant} />
         </View>
-        <Modal show={isSavePlant} type="success" image={photo} />
+        <Modal show={isSavePlant} type="success" plant={{ image: photo }} />
       </View>
     </ScrollView>
   );
