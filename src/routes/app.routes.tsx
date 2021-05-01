@@ -8,7 +8,8 @@ import {
   Welcome, 
   Confirmation, 
   Identification, 
-  PlantSelection, 
+  PlantSelection,
+  Plant, 
 } from '@pages';
 
 const { Navigator, Screen } = createStackNavigator();
@@ -27,6 +28,7 @@ export default function AppRoutes() {
       <Screen name="Identification" component={Identification} />
       <Screen name="Confirmation" component={Confirmation} />
       <Screen name="PlantSelection" component={PlantSelection} />
+      <Screen name="Plant" component={Plant} />
     </Navigator>
   );
 }

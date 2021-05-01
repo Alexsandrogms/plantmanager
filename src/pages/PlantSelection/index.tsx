@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 import {
   View,
@@ -20,29 +21,24 @@ type EnvironmentData = {
   title: string;
 };
 
-type PlantsData = {
+type PlantData = {
   id: number;
   name: string;
-  about: string;
-  water_tips: string;
   photo: string;
   environments: String[];
-  frequency: {
-    times: number;
-    repeat_every: string;
-  };
 };
 
 export default function PlanSelection() {
+  const navigation = useNavigation().navigate;
+
   const [environments, setEnvironments] = useState<EnvironmentData[]>([]);
-  const [plants, setPlants] = useState<PlantsData[]>([]);
-  const [filteredPlants, setFilteredPlants] = useState<PlantsData[]>([]);
+  const [plants, setPlants] = useState<PlantData[]>([]);
+  const [filteredPlants, setFilteredPlants] = useState<PlantData[]>([]);
 
   const [environmentSelected, setEnvironmentSelected] = useState('all');
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [loadedAll, setLoadedAll] = useState(false);
 
   const getPlans = async () => {
     const { data } = await api.get('plants', {
@@ -88,6 +84,10 @@ export default function PlanSelection() {
     setLoadingMore(true);
     setPage((prevState) => prevState + 1);
     getPlans();
+  };
+
+  const handleSelectPlant = (plant: PlantData) => {
+    return navigation('Plant', plant);
   };
 
   useEffect(() => {
@@ -150,7 +150,12 @@ export default function PlanSelection() {
         <FlatList
           data={filteredPlants}
           keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => <PlantCardPrimary data={item} />}
+          renderItem={({ item }) => (
+            <PlantCardPrimary
+              data={item}
+              onPress={() => handleSelectPlant(item)}
+            />
+          )}
           showsVerticalScrollIndicator={false}
           numColumns={2}
           onEndReachedThreshold={0.1}

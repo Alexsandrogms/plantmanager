@@ -7,12 +7,18 @@ import colors from '@styles/colors';
 interface ButtonProps extends RectButtonProps {
   text: string;
   disabled?: boolean;
+  width?: number;
 }
 
-export default function Button({ text, disabled, ...rest }: ButtonProps) {
+export default function Button({
+  text,
+  disabled,
+  width = 231,
+  ...rest
+}: ButtonProps) {
   return (
     <RectButton
-      style={[styles.button, disabled && styles.buttonDisabled]}
+      style={[styles.button, { width }, disabled && styles.buttonDisabled]}
       {...rest}
     >
       <Text style={styles.buttonText}>{text}</Text>
@@ -22,7 +28,6 @@ export default function Button({ text, disabled, ...rest }: ButtonProps) {
 
 const styles = StyleSheet.create({
   button: {
-    width: 231,
     height: 56,
     borderRadius: 16,
     alignItems: 'center',
