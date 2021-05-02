@@ -7,12 +7,10 @@
       "*": ["src/*"],
       "@components": ["src/components"],
       "@pages": ["src/pages"],
-      "@enums": ["src/enums"],
       "@routes": ["src/routes"],
-      "@utils": ["src/utils/*"],
+      "@utils/*": ["src/utils/*"],
       "@assets/*": ["src/assets/*"],
       "@services/*": ["src/services/*"],
-      "@contexts/*": ["src/contexts/*"],
       "@styles/*": ["src/styles/*"],
     },
   }

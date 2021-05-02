@@ -121,9 +121,9 @@ export default function MyPlants() {
       } catch (error) {
         console.log(error);
       }
-
-      setLoading(false);
     })();
+
+    setLoading(false);
   }, [isFocused]);
 
   if (loading) return <Load />;

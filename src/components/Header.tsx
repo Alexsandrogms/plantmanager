@@ -1,23 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 
 import fonts from '@styles/fonts';
 import colors from '@styles/colors';
-
-import { useMainContext } from '@contexts/MainContext';
-
+import { getUser } from '@utils/asyncStorage';
 interface HeaderProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   image: string;
 }
 
 const { width: screenW } = Dimensions.get('window');
 
 export default function Header({ title, subtitle, image }: HeaderProps) {
-  const { username } = useMainContext();
+  const [username, setUsername] = useState<string>('');
+
+  useEffect(() => {
+    getUser().then((result) => setUsername(result || ''));
+  }, []);
 
   return (
     <View style={styles.wrapper}>
