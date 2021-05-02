@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import colors from '@styles/colors';
-import { Plant } from '@pages';
+import { Plant, Profile } from '@pages';
 
 import TabRoutes from './tab.routes';
 
@@ -20,6 +20,7 @@ export default function AuthRoutes() {
     >
       <Screen name="PlantSelection" component={TabRoutes} />
       <Screen name="Plant" component={Plant} />
+      <Screen name="Profile" component={Profile} />
     </Navigator>
   );
 }

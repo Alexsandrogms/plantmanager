@@ -2,24 +2,37 @@ import React, { useEffect, useState } from 'react';
 
 import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
+import { RectButton } from 'react-native-gesture-handler';
+import { useNavigation, useIsFocused } from '@react-navigation/core';
 
 import fonts from '@styles/fonts';
 import colors from '@styles/colors';
-import { getUser } from '@utils/asyncStorage';
+import { getImageProfile, getUsername } from '@utils/asyncStorage';
 interface HeaderProps {
   title: string;
   subtitle?: string;
-  image: string;
 }
 
 const { width: screenW } = Dimensions.get('window');
 
-export default function Header({ title, subtitle, image }: HeaderProps) {
+export default function Header({ title, subtitle }: HeaderProps) {
+  const navigation = useNavigation().navigate;
+  const isFocused = useIsFocused();
+
   const [username, setUsername] = useState<string>('');
+  const [image, setImage] = useState<string>('');
+
+  const navigateToProfile = () => navigation('Profile');
 
   useEffect(() => {
-    getUser().then((result) => setUsername(result || ''));
-  }, []);
+    (async () => {
+      const usernameStored = await getUsername();
+      const imageStored = await getImageProfile();
+
+      setUsername(usernameStored || '');
+      setImage(imageStored || '');
+    })();
+  }, [isFocused]);
 
   return (
     <View style={styles.wrapper}>
@@ -27,12 +40,16 @@ export default function Header({ title, subtitle, image }: HeaderProps) {
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{subtitle || username}</Text>
       </View>
-      <Image
-        source={{
-          uri: 'https://avatars.githubusercontent.com/u/49795688?v=4',
-        }}
-        style={styles.image}
-      />
+      <RectButton onPress={navigateToProfile}>
+        {image.length > 0 && (
+          <Image
+            source={{
+              uri: image,
+            }}
+            style={styles.image}
+          />
+        )}
+      </RectButton>
     </View>
   );
 }

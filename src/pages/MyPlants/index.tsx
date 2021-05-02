@@ -131,7 +131,7 @@ export default function MyPlants() {
   return (
     <>
       <View style={styles.container}>
-        <Header title="Minhas" subtitle="Plantinhas" image="" />
+        <Header title="Minhas" subtitle="Plantinhas" />
 
         {plantList.length ? (
           <>

@@ -118,7 +118,7 @@ export default function PlanSelection() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.heading}>
-        <Header title="Olá," image={emojiHappyImg} />
+        <Header title="Olá," />
 
         <Text style={styles.title}>Em qual ambiente</Text>
         <Text style={styles.subtitle}>você quer colocar sua planta?</Text>
