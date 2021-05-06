@@ -23,6 +23,7 @@ import {
 
 import styles from './styles';
 import { useNavigation } from '@react-navigation/core';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Profile() {
   const navigation = useNavigation().goBack;
@@ -110,6 +111,7 @@ export default function Profile() {
           </RectButton>
           <RectButton
             onPress={handleSelectedImage}
+            enabled={isEdit}
             style={[
               styles.cardImageWrapper,
               {
