@@ -7,13 +7,14 @@ import {
   Alert,
   Image,
   TextInput,
-  KeyboardAvoidingView,
   SafeAreaView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { RectButton } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/core';
 
 import plantImage from '@assets/plant.png';
+
 import {
   getImageProfile,
   getUsername,
@@ -22,8 +23,6 @@ import {
 } from '@utils/asyncStorage';
 
 import styles from './styles';
-import { useNavigation } from '@react-navigation/core';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Profile() {
   const navigation = useNavigation().goBack;
@@ -119,12 +118,13 @@ export default function Profile() {
               },
             ]}
           >
-            {image.length > 0 && (
+            {image ? (
+              <Image source={{ uri: image }} style={styles.cardImage} />
+            ) : (
               <Image
-                source={{
-                  uri: image,
-                }}
+                source={require('@assets/profile.png')}
                 style={styles.cardImage}
+                resizeMode="contain"
               />
             )}
           </RectButton>

@@ -18,6 +18,7 @@ import {
 import emojiSmileyImg from '@assets/emoji-smiley.png';
 import emojiSmileImg from '@assets/emoji-smile.png';
 import { Button } from '@components';
+import { saveUsername } from '@utils/asyncStorage';
 
 import styles from './styles';
 
@@ -42,7 +43,7 @@ export default function Identification() {
     }
 
     try {
-      await AsyncStorage.setItem('@plantmanager:username', name);
+      await saveUsername(name);
       navigation('Confirmation');
     } catch {
       Alert.alert('', 'Não foi possível salvar o nome do usuário! 😥');

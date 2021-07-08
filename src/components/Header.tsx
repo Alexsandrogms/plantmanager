@@ -8,6 +8,7 @@ import { useNavigation, useIsFocused } from '@react-navigation/core';
 import fonts from '@styles/fonts';
 import colors from '@styles/colors';
 import { getImageProfile, getUsername } from '@utils/asyncStorage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 interface HeaderProps {
   title: string;
   subtitle?: string;
@@ -16,18 +17,20 @@ interface HeaderProps {
 const { width: screenW } = Dimensions.get('window');
 
 export default function Header({ title, subtitle }: HeaderProps) {
-  const navigation = useNavigation().navigate;
+  const navigation = useNavigation();
   const isFocused = useIsFocused();
 
   const [username, setUsername] = useState<string>('');
   const [image, setImage] = useState<string>('');
 
-  const navigateToProfile = () => navigation('Profile');
+  const navigateToProfile = () => navigation.navigate('Profile');
 
   useEffect(() => {
     (async () => {
       const usernameStored = await getUsername();
       const imageStored = await getImageProfile();
+
+      await AsyncStorage.removeItem('@plantmanager:profile');
 
       setUsername(usernameStored || '');
       setImage(imageStored || '');
@@ -41,13 +44,16 @@ export default function Header({ title, subtitle }: HeaderProps) {
         <Text style={styles.subtitle}>{subtitle || username}</Text>
       </View>
       <RectButton onPress={navigateToProfile}>
-        {image.length > 0 && (
-          <Image
-            source={{
-              uri: image,
-            }}
-            style={styles.image}
-          />
+        {image ? (
+          <Image source={{ uri: image }} style={styles.image} />
+        ) : (
+          <View style={styles.wrapperImage}>
+            <Image
+              source={require('@assets/profile.png')}
+              style={styles.imageDefault}
+              resizeMode="contain"
+            />
+          </View>
         )}
       </RectButton>
     </View>
@@ -80,5 +86,25 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
+  },
+  imageDefault: {
+    width: 70,
+    height: 70,
+  },
+  wrapperImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    shadowColor: colors.shape,
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    elevation: 2,
+    shadowRadius: 16.0,
   },
 });

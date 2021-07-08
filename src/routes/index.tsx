@@ -6,6 +6,7 @@ import { getUsername } from '@utils/asyncStorage';
 
 import AppRoutes from './app.routes';
 import AuthRoutes from './auth.routes';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Routes() {
   const [hasUser, setHasUser] = useState<boolean>(false);
@@ -15,6 +16,8 @@ export default function Routes() {
     (async () => {
       try {
         const user = await getUsername();
+
+        await AsyncStorage.removeItem('@plantmanager:username');
 
         setHasUser(user ? true : false);
       } catch (error) {

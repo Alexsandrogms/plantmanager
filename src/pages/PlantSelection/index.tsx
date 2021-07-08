@@ -15,6 +15,7 @@ import api from '@services/api';
 import { EnvironmentButton, Header, PlantCardPrimary, Load } from '@components';
 
 import styles from './styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type EnvironmentData = {
   key: string;
